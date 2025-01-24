@@ -24,6 +24,7 @@ Dont run this on public internet unless you have implemented necessary precautio
 ## Download New Models
 To download models, you need to access the Docker container and run the command, on the dcocker host run:
 ```docker exec -it ollama bash```
+
 ```ollama pull <model name>```.
 
 When the download is done you will see it in your Open WebUI.
