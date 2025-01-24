@@ -14,4 +14,9 @@
 
  # Note
  This deployment is dependent on latest install of docker. This was tested on docker version: Docker Engine Version: 27.5.1
- 
+
+## Installing Docker
+See the Documentation for installing Docker of your chosen OS.
+
+## Recomendation
+Dont run this on public internet unless you have implemented necessary precautions to secure the host. Ensure you have enabled SSL/TLS using letsencrypt or any other means for SSL deployment.

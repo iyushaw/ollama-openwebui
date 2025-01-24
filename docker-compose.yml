@@ -1,0 +1,15 @@
+---
+services:
+  ollama:
+    container_name: ollama
+
+
+  openui:
+    container_name: openui
+
+
+  nginx:
+    container_name: nginx
+
+
+...
