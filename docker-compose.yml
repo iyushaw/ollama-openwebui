@@ -31,7 +31,7 @@ services:
       - ${OPENUI_PORT}:8080
     environment:
       - 'OLLAMA_BASE_URL=http://ollama:${OPENUI_PORT}'
-      - 'WEBUI_SECRET_KEY=${SECRET_KEY}' # change the secrete key before deployment
+      - 'WEBUI_SECRET_KEY=${SECRET_KEY}' # change the secrete key before deployment in the env file
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
@@ -41,7 +41,7 @@ services:
     container_name: nginx
     image: nginx:${NGINX_TAG}
     volumes:
-      - ./default.conf:/etc/nginx/nginx.conf
+      - ./nginx/default.conf:/etc/nginx/nginx.conf
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
     ports:
@@ -64,7 +64,7 @@ services:
     entrypoint: ./nginx/renew.sh     
     restart: unless-stopped
     networks:
-      - OON
+      - private
 
 networks:
   private:
