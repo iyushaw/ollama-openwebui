@@ -3,21 +3,21 @@ services:
 # This is the OLLAMA Container
   ollama:
     container_name: ollama
-    image: ollama/ollama
+    image: ollama/ollama:${OLLAMA_TAG}
     volumes:
       - ./ollama:/root/.ollama
     tty: true
     restart: unless-stopped
     ports:
-      - 11434:11434
+      - ${OLLAMA_PORT}:11434
     ## Uncomment the lines below if you have access to a GPU which will make processing faster, I have issues with NVIDIA drivers hence commenting it out
     # deploy:
     #   resources:
     #     reservations:
     #       devices:
     #         - driver: nvidia
-    #           count: 1  # Number of GPUs to allocate
-    #           capabilities: ["gpu"]
+    #           count: 1
+    #           capabilities: [compute,video,graphics,utility]
 
 # This is the OpenWebUI Container
   webui:
@@ -28,10 +28,10 @@ services:
     depends_on:
       - ollama
     ports:
-      - 3010:8080
+      - ${OPENUI_PORT}:8080
     environment:
-      - 'OLLAMA_BASE_URL=http://ollama:11434'
-      - 'WEBUI_SECRET_KEY=cGFzc3dvcmQxMjNeJSQK' # change the secrete key before deployment
+      - 'OLLAMA_BASE_URL=http://ollama:${OPENUI_PORT}'
+      - 'WEBUI_SECRET_KEY=${SECRET_KEY}' # change the secrete key before deployment
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
@@ -39,14 +39,14 @@ services:
 # This is the Nginx Web Server used as a Reverse Proxy
   nginx:
     container_name: nginx
-    image: nginx:latest
+    image: nginx:${NGINX_TAG}
     volumes:
       - ./default.conf:/etc/nginx/nginx.conf
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
     ports:
-      - "80:80"
-      - "443:443"
+      - "${NGINX_HTTP}:80"
+      - "${NGINX_HTTP}:443"
     depends_on:
       - openui
     restart: unless-stopped
@@ -61,7 +61,7 @@ services:
     volumes:
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 1; done'"
+    entrypoint: ./nginx/renew.sh     
     restart: unless-stopped
     networks:
       - OON

@@ -19,4 +19,4 @@
 See the Documentation for installing Docker of your chosen OS.
 
 ## Recomendation
-Dont run this on public internet unless you have implemented necessary precautions to secure the host. Ensure you have enabled SSL/TLS using letsencrypt or any other means for SSL deployment.
+Dont run this on public internet unless you have implemented necessary precautions to secure the host. Ensure you have enabled SSL/TLS using letsencrypt or any other means for SSL deployment. I have made provisions for the SSL/TLS script 
