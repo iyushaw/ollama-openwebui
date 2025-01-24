@@ -1,15 +1,75 @@
 ---
 services:
+# This is the OLLAMA Container
   ollama:
     container_name: ollama
+    image: ollama/ollama
+    volumes:
+      - ./ollama:/root/.ollama
+    tty: true
+    restart: unless-stopped
+    ports:
+      - 11434:11434
+    ## Uncomment the lines below if you have access to a GPU which will make processing faster, I have issues with NVIDIA drivers hence commenting it out
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1  # Number of GPUs to allocate
+    #           capabilities: ["gpu"]
 
+# This is the OpenWebUI Container
+  webui:
+    container_name: open-webui
+    image: ghcr.io/open-webui/open-webui
+    volumes:
+      - ./openui:/app/backend/data
+    depends_on:
+      - ollama
+    ports:
+      - 3010:8080
+    environment:
+      - 'OLLAMA_BASE_URL=http://ollama:11434'
+      - 'WEBUI_SECRET_KEY=cGFzc3dvcmQxMjNeJSQK' # change the secrete key before deployment
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
 
-  openui:
-    container_name: openui
-
-
+# This is the Nginx Web Server used as a Reverse Proxy
   nginx:
     container_name: nginx
+    image: nginx:latest
+    volumes:
+      - ./default.conf:/etc/nginx/nginx.conf
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - openui
+    restart: unless-stopped
+    networks:
+      - private
+      - OON
 
+# This is Lets Encrypt Container to download SSL/TLS that will be used in the nginx reverse proxy for security
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 1; done'"
+    restart: unless-stopped
+    networks:
+      - OON
 
+networks:
+  private:
+    driver: bridge
+
+  OON:
+    driver: bridge
 ...
