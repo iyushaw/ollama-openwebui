@@ -22,10 +22,11 @@ See the Documentation for installing Docker of your chosen OS.
 Dont run this on public internet unless you have implemented necessary precautions to secure the host. Ensure you have enabled SSL/TLS using letsencrypt or any other means for SSL deployment. I have made provisions for the SSL/TLS script 
 
 ## Download New Models
-To download models, you need to access the Docker container and run the command, on the dcocker host run:
+To downnload the model you want, head to ```https://ollama.com/search``` find the model you want to use and execute the command below to access the Docker container:
+
 ```docker exec -it ollama bash```
 
-```ollama pull <model name>```.
+``` ollama pull <image> ```
 
 When the download is done you will see it in your Open WebUI.
 
